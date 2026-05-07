@@ -1,0 +1,76 @@
+You are an expert front‑end developer. Based on the HTML/CSS/JS code provided above (the “Campus Icon · Al Akhawayn University” dashboard), please produce a complete, self‑contained HTML document that implements the following enhancements and fixes. Keep the same visual identity (green/white portal style, same fonts, cards, tabs, login screen) unless stated otherwise.
+
+1. Data persistence & state management
+All user data (scores, categories, activity feed, missions claimed, last AI bonus date, etc.) must be stored in localStorage under a single key e.g., "campusicon_complete".
+
+After login, if a student ID already exists in storage, load that user’s full state. If it’s a new ID, generate a rich history (as currently done) but also initialise claimedMissions (array) and lastBoostDate.
+
+The admin user Walid Didih must always exist and have the highest score (around 1840). Do not allow his data to be overwritten by a normal login.
+
+2. Missions system – make it persistent and repeatable
+Currently missions are hard‑coded in refreshUI() and claim buttons are re‑attached each time. Fix this:
+
+Store a list of active missions (e.g., “Eco streak”, “Help 2 peers”) in the user object under availableMissions.
+
+Each mission has a unique id, a reward (points), and a claimed boolean.
+
+When the user clicks “Claim”, add the reward once and mark it as claimed. Disable the button and change text to “Claimed”. Persist immediately.
+
+Add a new mission every day (simulated by checking last mission reset date) – e.g., “Attend 1 club event this week: +15”. Users can claim it only after performing the related action (we can simulate by allowing direct claim for demo, but add a note that in production it would be validated).
+
+3. AI Mentor – smarter and more interactive
+The AI should remember the last 5 conversation turns in the user’s storage (as an array of { role, content }). Display them in the chat log.
+
+Add more commands:
+
+“explain categories” – shows current breakdown of volunteer/clubs/environment/conduct.
+
+“weekly summary” – gives a summary of points earned/lost in the last 7 days.
+
+“challenge me” – offers a random 24h challenge (e.g., “Recycle today: +8 if you claim tomorrow”) ; the user can accept the challenge and later claim reward.
+
+“compare with [name]” – if the name exists in the leaderboard, show the score difference and advice.
+
+Ensure the daily boost (boost me or bonus) checks lastBoostDate (store as ISO date). Award +8 points only once per calendar day.
+
+4. Penalty appeals & reflection
+Add a new section in the Dashboard tab (below the quick actions) called “Accountability reflection”.
+
+It should show the last penalty event (if any in the last 7 days) with a text area where the student can write a reflection (min 30 characters). After submitting, reduce the original penalty by 30% (rounded down) and add a success message. Each penalty can be appealed only once.
+
+Store appeals in the user object to prevent multiple appeals on the same penalty.
+
+5. Visual improvements & polish
+Add a progress bar (from 0 to max score) below the score number, showing how close the student is to the next tier (e.g., Silver → Gold → Legendary).
+
+Show the next tier threshold and points needed.
+
+Add a small reputation chart (sparkline) in the Overview tab using SVG or Canvas – show score trend of the last 7 days (extract from activity feed).
+
+Make the AI chat bubble area scrollable and auto‑scroll to bottom when new messages appear.
+
+6. Bug fixes & code quality
+The refreshUI() function currently re‑binds mission claim buttons each time, which can cause memory leaks. Use event delegation for claim buttons (like action buttons).
+
+Ensure that negative actions (curfew, disrespect) correctly update the penalties category and reduce the conduct score (conduct = 300 – penalties, but not below 0).
+
+The weekly gain should be recalculated after any score change (already done, but ensure it also reflects mission claims and AI boosts).
+
+Remove any console.log or unnecessary debug code. Use sanitizeText for all user‑provided names in leaderboard and chat logs.
+
+On logout, clear the stored current user from localStorage (or keep it, but reset the login screen).
+
+7. Bonus (nice to have)
+Add a dark mode toggle (switch between light and dark theme) that persists in localStorage.
+
+Add a simple calendar view in a new tab that shows upcoming campus events (mock data) and allows the student to “RSVP” for +5 points (once per event).
+
+For mobile devices, ensure all buttons are large enough to tap (minimum 44px touch target).
+
+8. Deliverable
+Return the full HTML/CSS/JS code as a single file. It must be fully functional, self‑contained, and open in a browser without any external dependencies except the Google Fonts and Tabler Icons already used.
+
+Include comments separating the main sections: /* STATE */, /* UI RENDERING */, /* ACTIONS */, /* AI */, etc.
+
+The login must still accept any ID/password (demo mode). No backend required.
+
